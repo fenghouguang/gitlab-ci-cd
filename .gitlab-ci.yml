@@ -3,7 +3,7 @@ default:
     - . ci-library.sh
     - export GOPATH=${CI_PROJECT_DIR}/.go
   image:
-    name: imsdom/golang-ci:1.18
+    name: golang-ci:1.18
     pull_policy: [ if-not-present ]
 include:
   - local: '/ci-library.yml'

@@ -1,0 +1,15 @@
+.build_only: &build_only
+  stage: build
+  cache:
+    key: ${CACHE_KEY}
+    paths: [ ".go/pkg/mod/" ]
+    untracked: false
+    policy: pull-push
+  script:
+    -echo "default"
+  when: always
+
+.build_then_upload: &build_then_upload
+  extends: .build_only
+  script:
+    - echo "default"

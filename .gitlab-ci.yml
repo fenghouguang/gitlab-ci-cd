@@ -1,0 +1,35 @@
+default:
+  before_script:
+    - . ci-library.sh
+    - export GOPATH=${CI_PROJECT_DIR}/.go
+  image:
+    name: imsdom/golang-ci:1.18
+    pull_policy: [ if-not-present ]
+include:
+  - local: '/ci-library.yml'
+variables:
+  CACHE_KEY: "ci-cache-${CI_PROJECT_ID}-${CI_PROJECT_NAME}"
+  SERVICE_GROUP: "web"
+  SERVICE_NAME: "server"
+  GIT_SUBMODULE_STRATEGY: recursive
+  GIT_SUBMODULE_UPDATE_FLAGS: --jobs 4
+
+stages: [ build ]
+package:
+  variables: { ENV_NAME: "anywhere" }
+  extends: .build_only
+  only: [ /^feature.*$/, /^hotfix.*$/ ]
+################################################################
+for-develop:
+  variables: { ENV_NAME: "main" }
+  extends: .build_then_upload
+  script:
+    - foo
+    - go_build
+    - ARG_PRIVATE_KEY=${SSH_PRIVATE_KEY} && ARG_KNOWN_HOSTS=${SSH_KNOWN_HOSTS} && ssh_agent_do
+    - upload_do
+  only:
+    refs:
+      - /^main/
+################################################################
+
